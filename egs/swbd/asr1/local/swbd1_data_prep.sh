@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Switchboard-1 training data preparation customized for Edinburgh
 # Author:  Arnab Ghoshal (Jan 2013)
@@ -37,8 +37,8 @@ if [ ! -d $SWBD_DIR ]; then
   exit 1;
 fi
 
-sph2pipe=$KALDI_ROOT/tools/sph2pipe_v2.5/sph2pipe
-[ ! -x $sph2pipe ] \
+sph2pipe=sph2pipe
+! command -v "${sph2pipe}" &> /dev/null \
   && echo "Could not execute the sph2pipe program at $sph2pipe" && exit 1;
 
 # Option A: SWBD dictionary file check

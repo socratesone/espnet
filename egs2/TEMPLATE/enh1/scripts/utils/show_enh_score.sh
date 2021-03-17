@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 mindepth=0
 maxdepth=1
 
@@ -29,7 +29,7 @@ cat << EOF
 EOF
 
 python3 << EOF
-import sys, espnet, chainer, torch
+import sys, espnet, torch
 pyversion = sys.version.replace('\n', ' ')
 
 print(f"""- python version: \`{pyversion}\`
@@ -51,7 +51,7 @@ while IFS= read -r expdir; do
         metrics=()
         heading="\n|dataset|"
         sep="|---|"
-        for type in pesq stoi sar sdr sir; do
+        for type in pesq stoi sar sdr sir si_snr; do
             if ls "${expdir}"/enhanced_*/scoring/result_${type}.txt &> /dev/null; then
                 metrics+=("$type")
                 heading+="${type^^}|"

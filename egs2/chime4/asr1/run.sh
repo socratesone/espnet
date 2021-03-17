@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Set bash to 'debug' mode, it will exit on :
 # -e 'error', -u 'undefined variable', -o ... 'error in pipeline', -x 'print commands',
 set -e
@@ -36,4 +36,5 @@ word_vocab_size=65000
     --train_set "${train_set}"             \
     --valid_set "${valid_set}"             \
     --test_sets "${test_sets}"             \
-    --srctexts "data/${train_set}/text data/local/other_text/text" "$@"
+    --bpe_train_text "data/${train_set}/text" \
+    --lm_train_text "data/${train_set}/text data/local/other_text/text" "$@"

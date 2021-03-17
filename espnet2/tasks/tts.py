@@ -186,8 +186,11 @@ class TTSTask(AbsTask):
                 "g2p_en_no_space",
                 "pyopenjtalk",
                 "pyopenjtalk_kana",
+                "pyopenjtalk_accent",
+                "pyopenjtalk_accent_with_pause",
                 "pypinyin_g2p",
                 "pypinyin_g2p_phone",
+                "espeak_ng_arabic",
             ],
             default=None,
             help="Specify g2p method if --token_type=phn",
@@ -200,7 +203,7 @@ class TTSTask(AbsTask):
 
     @classmethod
     def build_collate_fn(
-        cls, args: argparse.Namespace
+        cls, args: argparse.Namespace, train: bool
     ) -> Callable[
         [Collection[Tuple[str, Dict[str, np.ndarray]]]],
         Tuple[List[str], Dict[str, torch.Tensor]],
@@ -231,7 +234,9 @@ class TTSTask(AbsTask):
         return retval
 
     @classmethod
-    def required_data_names(cls, inference: bool = False) -> Tuple[str, ...]:
+    def required_data_names(
+        cls, train: bool = True, inference: bool = False
+    ) -> Tuple[str, ...]:
         if not inference:
             retval = ("text", "speech")
         else:
@@ -240,7 +245,9 @@ class TTSTask(AbsTask):
         return retval
 
     @classmethod
-    def optional_data_names(cls, inference: bool = False) -> Tuple[str, ...]:
+    def optional_data_names(
+        cls, train: bool = True, inference: bool = False
+    ) -> Tuple[str, ...]:
         if not inference:
             retval = ("spembs", "durations", "pitch", "energy")
         else:
@@ -297,8 +304,24 @@ class TTSTask(AbsTask):
         energy_normalize = None
         if getattr(args, "pitch_extract", None) is not None:
             pitch_extract_class = pitch_extractor_choices.get_class(args.pitch_extract)
+            if args.pitch_extract_conf.get("reduction_factor", None) is not None:
+                assert args.pitch_extract_conf.get(
+                    "reduction_factor", None
+                ) == args.tts_conf.get("reduction_factor", 1)
+            else:
+                args.pitch_extract_conf["reduction_factor"] = args.tts_conf.get(
+                    "reduction_factor", 1
+                )
             pitch_extract = pitch_extract_class(**args.pitch_extract_conf)
         if getattr(args, "energy_extract", None) is not None:
+            if args.energy_extract_conf.get("reduction_factor", None) is not None:
+                assert args.energy_extract_conf.get(
+                    "reduction_factor", None
+                ) == args.tts_conf.get("reduction_factor", 1)
+            else:
+                args.energy_extract_conf["reduction_factor"] = args.tts_conf.get(
+                    "reduction_factor", 1
+                )
             energy_extract_class = energy_extractor_choices.get_class(
                 args.energy_extract
             )

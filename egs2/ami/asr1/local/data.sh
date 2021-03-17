@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #  Apache 2.0  (http://www.apache.org/licenses/LICENSE-2.0)
 
 . ./path.sh || exit 1;
@@ -20,6 +20,8 @@ SECONDS=0
 # ./run.sh --mic mdm8
 mic=ihm
 
+. utils/parse_options.sh
+
 log() {
     local fname=${BASH_SOURCE[1]##*/}
     echo -e "$(date '+%Y-%m-%dT%H:%M:%S') (${fname}:${BASH_LINENO[0]}:${FUNCNAME[1]}) $*"
@@ -35,6 +37,8 @@ fi
 set -e
 set -u
 set -o pipefail
+
+. utils/parse_options.sh
 
 base_mic=${mic//[0-9]/} # sdm, ihm or mdm
 nmics=${mic//[a-z]/} # e.g. 8 for mdm8.
